@@ -2960,6 +2960,18 @@ better because it preserves more of the programmer's intent.
 ```haskell
 interpretConstExpr :: CExpr -> EnvMonad s Integer
 interpretConstExpr (CConst (CIntConst (CInteger v _ _) _)) = return v
+interpretConstExpr (CBinary CAddOp lhs rhs _) = do
+    lhs' <- interpretConstExpr lhs
+    rhs' <- interpretConstExpr rhs
+    return (lhs' + rhs')
+interpretConstExpr (CBinary CMulOp lhs rhs _) = do
+    lhs' <- interpretConstExpr lhs
+    rhs' <- interpretConstExpr rhs
+    return (lhs' * rhs')
+interpretConstExpr (CBinary CShlOp lhs rhs _) = do
+    lhs' <- interpretConstExpr lhs
+    rhs' <- interpretConstExpr rhs
+    return (lhs' * 2^rhs')
 interpretConstExpr expr = unimplemented expr
 ```
 
