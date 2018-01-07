@@ -371,13 +371,20 @@ getSymbolIdent ident = do
             , result = Rust.Deref (Rust.Lit (Rust.LitByteStr (name' ++ "\NUL")))
             }
     builtinSymbols =
-        [ ("__builtin_bswap" ++ show w, Result
+        [ (c, Result
             { resultType = IsFunc (IsInt Unsigned (BitWidth w))
                 [(Nothing, IsInt Unsigned (BitWidth w))] False
             , resultMutable = Rust.Immutable
-            , result = Rust.Path (Rust.PathSegments ["u" ++ show w, "swap_bytes"])
+            , result = Rust.Path (Rust.PathSegments ["u" ++ show w, rust])
             })
-        | w <- [16, 32, 64]
+            | (c, rust, w) <- [
+                ("__builtin_bswap16", "swap_bytes", 16),
+                ("__builtin_bswap32", "swap_bytes", 32),
+                ("__builtin_bswap64", "swap_bytes", 64),
+                ("__builtin_clzll", "leading_zeros", 64),
+                ("__builtin_ctzll", "trailing_zeros", 64),
+                ("__builtin_popcountll", "count_ones", 64)
+            ]
         ]
         ++
         [ ("__FILE__", Result
