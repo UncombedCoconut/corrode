@@ -2358,6 +2358,11 @@ on whether the pointer was to a mutable value.
                 , resultMutable = mut'
                 , result = Rust.Deref (result expr')
                 }
+            IsArray mut' _ ty' -> return Result
+                { resultType = ty'
+                , resultMutable = mut'
+                , result = Rust.Index (result expr') 0
+                }
             IsFunc{} -> return expr'
             _ -> badSource node "dereference of non-pointer"
 ```
